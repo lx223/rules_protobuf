@@ -396,18 +396,16 @@ def _get_outdir(ctx, data):
   execdir = data.execdir
   if data.sources_are_generated and data.output_to_workspace:
     fail("output_to_workspace is not supported for generated proto files")
+
   if ctx.attr.output_to_workspace:
-    outdir = "."
+    outdir = ctx.label.package
   else:
-    outdir = ctx.var["GENDIR"]
+    outdir =  "%s/%s" % (ctx.var["GENDIR"], ctx.label.package)
   path = _get_offset_path(execdir, outdir)
 
   # If we are building generated files, the execdir and outdir are the same
   if path == "":
     return "."
-
-  if execdir != ".":
-    path += "/" + execdir
 
   if ctx.attr.root:
     path += "/" + ctx.attr.root
